@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from abc import ABC, abstractmethod
+import requests
 
 app = FastAPI(title="SMS Gateway")
 
@@ -28,4 +30,18 @@ async def get_message(message_id: int):
 async def post_message(phone_number, message_id: int):
     name = [client.get("name") for client in client_database if client.get("phone number") == phone_number]
     full_message = name[0] + ", " + messages[message_id - 1] + "."
-    return full_message
+    google_request = Google_Sender()
+    return google_request.send(phone_number, full_message)
+
+class Sender(ABC):
+    @staticmethod
+    @abstractmethod
+    def send(phone_number, message):
+        pass
+
+class Google_Sender(Sender):
+    @staticmethod
+    def send(phone_number, message):
+        params = {"q": {"phone number": phone_number, "message": message}}
+        response = requests.get("https://www.google.com/", params=params)
+        return [response.status_code, response.text]
