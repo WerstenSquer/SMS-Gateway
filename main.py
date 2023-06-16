@@ -27,21 +27,35 @@ async def get_message(message_id: int):
     return messages[message_id - 1]
 
 @app.post("/sending")
-async def post_message(phone_number, message_id: int):
+async def post_message(address, phone_number, message_id: int):
     name = [client.get("name") for client in client_database if client.get("phone number") == phone_number]
     full_message = name[0] + ", " + messages[message_id - 1] + "."
-    google_request = Google_Sender()
-    return google_request.send(phone_number, full_message)
+    return Sender().send(address, phone_number, full_message)
 
-class Sender(ABC):
+class Receiver(ABC):
     @staticmethod
     @abstractmethod
-    def send(phone_number, message):
+    def path_indicate():
         pass
 
-class Google_Sender(Sender):
+class To_Google(Receiver):
     @staticmethod
-    def send(phone_number, message):
+    def path_indicate():
+        path = "https://www.google.com/"
+        return path
+
+class To_Yandex(Receiver):
+    @staticmethod
+    def path_indicate():
+        path = "https://ya.ru/"
+        return path
+
+class Sender():
+    @staticmethod
+    def send(address, phone_number, message):
         params = {"q": {"phone number": phone_number, "message": message}}
-        response = requests.get("https://www.google.com/", params=params)
-        return [response.status_code, response.text]
+        if address == "Google":
+            response = requests.get(To_Google().path_indicate(), params=params)
+        elif address == "Yandex":
+            response = requests.get(To_Yandex().path_indicate(), params=params)
+        return response.status_code
