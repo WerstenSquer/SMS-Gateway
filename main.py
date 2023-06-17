@@ -3,6 +3,6 @@ from sender import Sender
 
 app = FastAPI(title="SMS Gateway")
 
-@app.post("/sending")
-async def post_message(address, phone_number, message):
-    return Sender().send(address, phone_number, message)
+@app.post("/mailing")
+async def post_mailing(address, phone_numbers: list, message):
+    return Sender().send(address, phone_numbers, message)
