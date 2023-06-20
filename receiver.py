@@ -11,6 +11,7 @@ class To_Google(Receiver):
     @staticmethod
     def response(phone_number, message):
         path = "https://www.google.com/"
+        #path = "https://www.perevodchikl.com"
         params = {"q": {phone_number, message}}
         response = requests.get(path, params=params)
         return response

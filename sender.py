@@ -4,7 +4,7 @@ from celery import Celery
 
 celery_app = Celery('tasks', broker='redis://localhost:6379/0')
 
-repeat_time = 60 # время, которое происходит повторная отправка
+repeat_time = 60 # время, за которое происходит повторная отправка
 
 class Sender_single():
     @staticmethod
@@ -27,7 +27,7 @@ class Sender_multiplie():
                 recepient = To_Yandex()
             try:
                 result = [recepient.response(number, message).status_code, number]
+                result_list.append(result)
             except requests.exceptions.ConnectionError as ex:
                 self.retry(exc=ex)
-            result_list.append(result)
         return result_list
