@@ -9,4 +9,4 @@ async def post_message(address, phone_number, message):
 
 @app.post("/mailing")
 async def post_mailing(address, phone_numbers: list, message):
-    return Sender_multiplie().send.apply_async((address, phone_numbers, message), countdown=10)
+    return Sender_multiplie().send.apply_async((address, phone_numbers, message), countdown=30)

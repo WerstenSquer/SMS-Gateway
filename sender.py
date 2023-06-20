@@ -4,7 +4,7 @@ from celery import Celery
 
 celery_app = Celery('tasks', broker='redis://localhost:6379/0')
 
-repeat_time = 60 # время, за которое происходит повторная отправка
+repeat_time = 60 #время, за которое происходит повторная отправка
 
 class Sender_single():
     @staticmethod
