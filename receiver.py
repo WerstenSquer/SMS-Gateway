@@ -23,3 +23,4 @@ class To_Yandex(Receiver):
         params = {"q": {phone_number, message}}
         response = requests.get(path, params=params)
         return response
+
