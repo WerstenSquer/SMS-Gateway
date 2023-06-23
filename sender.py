@@ -10,38 +10,40 @@ celery = Celery(
 
 celery.conf.task_routes = {
     'tasks.send_single': {'queue': 'sending'},
-    'tasks.send_multiple': {'queue': 'mailing'},
+    'tasks.send_multiple': {'queue': 'sending'},
 }
 
-TIME_REPEAT = 60 #время, за которое происходит повторная отправка
+TIME_REPEAT = 5
+MAX_RETRIES = 3
+
+deferred_address = []
+deferred_phone_number = []
+deferred_message = []
+deferred_sendings = {"address": deferred_address,
+                     "phone_number": deferred_phone_number,
+                     "message": deferred_message}
 
 class Sender_single():
-    @celery.task(bind=True, default_retry_delay=TIME_REPEAT)
+    @celery.task(bind=True, max_retries=MAX_RETRIES)
     def send_single(self, address, phone_number, message):
         if address == "Google":
             recepient = To_Google()
         elif address == "Yandex":
             recepient = To_Yandex()
-        try: recepient.response(phone_number, message).url
-        except requests.exceptions.ConnectionError as ex:
-                self.retry(exc=ex)
-        return recepient.response(phone_number, message).url
+        try:
+            with recepient.response(phone_number, message) as response:
+                result = {'status': response.status_code,
+                          'number': phone_number,
+                          'URL': response.url}
+        except requests.exceptions.ConnectionError:
+                self.retry(countdown=TIME_REPEAT)
+        return result
 
 class Sender_multiplie():
-    @celery.task(bind=True, default_retry_delay=TIME_REPEAT)
+    @celery.task(bind=True, max_retries=MAX_RETRIES)
     def send_multiple(self, address, phone_numbers: list, message):
         result_list = []
         for number in phone_numbers:
-            if address == "Google":
-                recepient = To_Google()
-            elif address == "Yandex":
-                recepient = To_Yandex()
-            try:
-                result = {'status_code': recepient.response(number, message).status_code,
-                          'URL': recepient.response(number, message).url}
-                result_list.append(result)
-            except requests.exceptions.ConnectionError as ex:
-                self.retry(exc=ex)
+            result = Sender_single.send_single(address, number, message)
             result_list.append(result)
         return result_list
-
