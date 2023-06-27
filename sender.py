@@ -16,13 +16,6 @@ celery.conf.task_routes = {
 TIME_REPEAT = 5
 MAX_RETRIES = 3
 
-deferred_address = []
-deferred_phone_number = []
-deferred_message = []
-deferred_sendings = {"address": deferred_address,
-                     "phone_number": deferred_phone_number,
-                     "message": deferred_message}
-
 class Sender_single():
     @celery.task(bind=True, max_retries=MAX_RETRIES)
     def send_single(self, address, phone_number, message):
@@ -39,7 +32,7 @@ class Sender_single():
                 self.retry(countdown=TIME_REPEAT)
         return result
 
-class Sender_multiplie():
+class Sender_multiple():
     @celery.task(bind=True, max_retries=MAX_RETRIES)
     def send_multiple(self, address, phone_numbers: list, message):
         result_list = []
