@@ -4,7 +4,7 @@
 
 This is SMS-gateway to send messages to users by phone number.
 
-**[FastAPI](https://fastapi.tiangolo.com/)** API web framework
+**[FastAPI](https://fastapi.tiangolo.com/)** web framework for building APIs with Python
 **[Celery](http://www.celeryproject.org/)** for background and delayed tasks  
 **[Redis](https://redis.io/)** for the message broker  
 **[Docker](https://docs.docker.com/)** for containerization  
