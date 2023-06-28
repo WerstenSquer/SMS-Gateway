@@ -1,8 +1,9 @@
-# FastAPI Celery Redis Docker REST API
+# SMS-Gateway
 
 ### Summary:
 
-This is SMS gateway to send messages to users by phone number.
+This is SMS-gateway to send messages to users by phone number.
+
 **[FastAPI](https://fastapi.tiangolo.com/)** API web framework.
 **[Celery](http://www.celeryproject.org/)** for background and delayed tasks  
 **[Redis](https://redis.io/)** for the message broker  
